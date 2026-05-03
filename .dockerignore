@@ -1,0 +1,12 @@
+.git
+.dart_tool
+.idea
+android
+ios
+linux
+macos
+windows
+build
+.metadata
+test1.iml
+# We do not ignore .env here because it is defined as an asset in pubspec.yaml and needed for the build.
