@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   String? get userId => _auth.currentUser?.uid;
 
@@ -70,6 +70,89 @@ class FirestoreService {
         .map((snapshot) {
       if (!snapshot.exists) return 0;
       return snapshot.data()?['total_plays'] ?? 0;
+    });
+  }
+
+  /// Update listening stats (total plays, total time, per-surah, and daily analytics).
+  Future<void> updateListeningStats({
+    required int surahId,
+    required String surahName,
+    required int additionalSeconds,
+    bool isNewPlay = false,
+  }) async {
+    if (userId == null) return;
+    final docRef = _db.collection('users').doc(userId).collection('stats').doc('usage');
+    final today = DateTime.now();
+    final dateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+    await _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+
+      if (!snapshot.exists) {
+        transaction.set(docRef, {
+          'total_plays': isNewPlay ? 1 : 0,
+          'total_listening_time_seconds': additionalSeconds,
+          'surah_plays': {
+            surahId.toString(): {
+              'count': isNewPlay ? 1 : 0,
+              'name': surahName,
+              'listening_time_seconds': additionalSeconds,
+            }
+          },
+          'daily_listening': {
+            dateKey: additionalSeconds,
+          },
+        });
+      } else {
+        final data = snapshot.data() ?? {};
+        final totalPlays = (data['total_plays'] ?? 0) + (isNewPlay ? 1 : 0);
+        final totalTime = (data['total_listening_time_seconds'] ?? 0) + additionalSeconds;
+
+        final Map<String, dynamic> surahPlays = Map<String, dynamic>.from(data['surah_plays'] ?? {});
+        final surahKey = surahId.toString();
+
+        if (surahPlays.containsKey(surahKey)) {
+          final surahData = Map<String, dynamic>.from(surahPlays[surahKey]);
+          final currentCount = surahData['count'] ?? 0;
+          final currentTime = surahData['listening_time_seconds'] ?? 0;
+
+          surahData['count'] = currentCount + (isNewPlay ? 1 : 0);
+          surahData['listening_time_seconds'] = currentTime + additionalSeconds;
+          surahPlays[surahKey] = surahData;
+        } else {
+          surahPlays[surahKey] = {
+            'count': isNewPlay ? 1 : 0,
+            'name': surahName,
+            'listening_time_seconds': additionalSeconds,
+          };
+        }
+
+        // Update daily listening
+        final Map<String, dynamic> dailyListening = Map<String, dynamic>.from(data['daily_listening'] ?? {});
+        dailyListening[dateKey] = (dailyListening[dateKey] ?? 0) + additionalSeconds;
+
+        transaction.update(docRef, {
+          'total_plays': totalPlays,
+          'total_listening_time_seconds': totalTime,
+          'surah_plays': surahPlays,
+          'daily_listening': dailyListening,
+        });
+      }
+    });
+  }
+
+  /// Get real-time stream of all user stats.
+  Stream<Map<String, dynamic>> getStatsStream() {
+    if (userId == null) return Stream.value({});
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('stats')
+        .doc('usage')
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return {};
+      return snapshot.data() ?? {};
     });
   }
 }

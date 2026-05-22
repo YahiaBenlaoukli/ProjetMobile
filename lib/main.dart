@@ -20,6 +20,7 @@ import 'features/quran/screens/surah_list_screen.dart';
 import 'features/azkar/screens/azkar_screen.dart';
 import 'features/prayer/screens/prayer_times_screen.dart';
 import 'features/player/widgets/mini_player.dart';
+import 'features/dashboard/screens/dashboard_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,10 +56,13 @@ class MyApp extends StatelessWidget {
         Provider<BiometricService>(create: (_) => BiometricService()),
         Provider<AuthService>(create: (_) => AuthService()),
         ChangeNotifierProvider<DownloadService>.value(value: downloadService),
-        ChangeNotifierProvider<AudioService>(
-          create: (_) => AudioService(downloadService),
-        ),
         Provider<FirestoreService>(create: (_) => FirestoreService()),
+        ChangeNotifierProvider<AudioService>(
+          create: (context) => AudioService(
+            downloadService,
+            context.read<FirestoreService>(),
+          ),
+        ),
         Provider<StorageService>(create: (_) => StorageService()),
         Provider<QuranApiService>(create: (_) => QuranApiService()),
         Provider<SecureStorageService>(create: (_) => SecureStorageService()),
@@ -104,12 +108,19 @@ class _MainScreenState extends State<MainScreen> {
       label: 'Prayer',
       title: 'مواقيت الصلاة',
     ),
+    _Tab(
+      icon: Icons.bar_chart_outlined,
+      activeIcon: Icons.bar_chart_rounded,
+      label: 'Stats',
+      title: 'الإحصائيات والنشاط',
+    ),
   ];
 
   final List<Widget> _screens = const [
     SurahListScreen(),
     AzkarScreen(),
     PrayerTimesScreen(),
+    DashboardScreen(),
   ];
 
   String _getInitials(String? displayName) {

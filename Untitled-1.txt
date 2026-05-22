@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="content-language" content="ar,en" />
+
+    <!-- Primary Meta Tags -->
+    <title>واجهات برمجية القرآن الكريم | Quran APIs Documentation – موسوعة التلاوات، البحث، الصوتيات، بيانات JSON، وأدوات المطورين</title>
+    <meta name="title" content="واجهات برمجية القرآن الكريم | Quran APIs Documentation – موسوعة التلاوات، البحث، الصوتيات، بيانات JSON، وأدوات المطورين" />
+    <meta name="description" content="واجهات برمجية القرآن الكريم | Quran APIs Documentation هو الدليل العربي/English الأشمل لدمج بيانات القرآن في المواقع والتطبيقات: 114 سورة كاملة، 6236 آية مع أرقام الصفحات والأجزاء والأحزاب، الأذكار اليومية، الأدعية القرآنية والحديثية، مواقيت الصلاة الدقيقة حسب الموقع، 604 صفحة من المصحف بصيغتي النص والصورة PNG عالية الجودة، تلاوات صوتية، فلاتر بحث، استجابات JSON جاهزة، وأوامر cURL. منصة جاهزة 24/7، مجانية بالكامل، بواجهات REST موثقة، أمثلة استخدام، وإرشادات تحسين الأداء للمشاريع القرآنية والمنتجات الإسلامية الذكية." />
+
+    <!-- Keywords -->
+
+<meta name="keywords" content="Quran API, Quran APIs Documentation, واجهات برمجية القرآن الكريم, واجهات برمجية للقرآن, API القرآن الكريم, Quran developer reference, Quran JSON responses, Quran data, القرآن JSON, Quran surah endpoint, Ayah endpoint, juz endpoint, hizb endpoint, صفحات القرآن API, Tafsir API, تفاسير القرآن API, Quran translation API, ترجمة القرآن API, Quran recitation API, تلاوات القرآن API, Quran audio streaming, استماع القرآن, Quran search API, بحث في القرآن, Quran metadata, بيانات القرآن, Quran pages images, صور صفحات المصحف, Quran pages text, نص صفحات القرآن, Muslim Azkar API, أذكار المسلم API, أذكار الصباح والمساء, Islamic duas API, أدعية إسلامية API, أدعية القرآن والسنة, Prayer times API, مواقيت الصلاة API, أوقات الصلاة حسب الموقع, Hijri date API, التاريخ الهجري API, Quran mushaf PNG, صور المصحف بصيغة PNG, Quran OCR, Quran indexing, فهرسة القرآن, Quran bots, بوتات القرآن, Quran chat, Quran automation, أتمتة القرآن, Quran data export, تصدير بيانات القرآن, RESTful Quran API, واجهات REST للقرآن, GraphQL Quran data, بيانات القرآن GraphQL, bilingual Quran API, واجهات برمجية ثنائية اللغة, Arabic English Quran data, بيانات القرآن عربي إنجليزي, Islamic developer tools, أدوات المطورين الإسلامية, تلاوات mp3, تلاوات صوتية, قراء القرآن, أدعية الأنبياء, مواقيت الصلاة حسب الموقع, صفحات المصحف كنص, صفحات المصحف كصور, وثائق API بالعربية والإنجليزية, توثيق التلاوات, تفاسير ابن كثير والسعدي, ترجمات إنجليزية, دعم المشاريع القرآنية, Quran SaaS integration, تكامل القرآن مع SaaS, Quran mobile apps, تطبيقات القرآن للموبايل, Quran progressive web apps, تطبيقات القرآن التقدمية, Quran CRM, Quran dashboards, لوحات تحكم القرآن, 114 سورة, 6236 آية, 604 صفحة, 30 جزء, 60 حزب, القرآن الكريم كامل, المصحف الشريف, آيات القرآن, سور القرآن, أجزاء القرآن, أحزاب القرآن, Quran verses, Quran chapters, Quran parts, Quran sections, القرآن المكي والمدني, Meccan Medinan Quran, معلومات السور, Surah information, معلومات الآيات, Ayah information, آيات السجدة, Sajdah verses, أسماء السور بالعربية والإنجليزية, Surah names Arabic English, عدد آيات السور, verse count per surah, Quran API free, واجهات برمجية مجانية للقرآن, Free Islamic API, واجهات إسلامية مجانية, No API key required, بدون مفتاح API, Unlimited API requests, طلبات غير محدودة, Fast Quran API, واجهات سريعة للقرآن, High availability Quran API, توفر عالي, HTTPS Quran API, واجهات آمنة HTTPS, Quran API examples, أمثلة على استخدام API القرآن, cURL Quran examples, أمثلة cURL للقرآن, GET POST Quran API, طرق GET POST للقرآن, Quran API parameters, معاملات API القرآن, Quran response format, صيغة استجابة القرآن, JSON Quran data, بيانات القرآن JSON, Quran API documentation Arabic, توثيق API القرآن بالعربية, Quran API documentation English, توثيق API القرآن بالإنجليزية, Bilingual Quran documentation, توثيق ثنائي اللغة, Quran for developers, القرآن للمطورين, Islamic content API, واجهات المحتوى الإسلامي, Muslim prayer times, مواقيت صلاة المسلمين, Daily Azkar, الأذكار اليومية, Morning evening Azkar, أذكار الصباح والمساء, Prophetic Duas, الأدعية النبوية, Quranic Duas, الأدعية القرآنية, Quran completion Duas, أدعية ختم القرآن, Laylat Al-Qadr information, معلومات ليلة القدر, Quran night of power, ليلة القدر, Islamic encyclopedia API, موسوعة إسلامية API, Quran research API, بحوث القرآن API, Academic Quran data, بيانات القرآن الأكاديمية, Quran linguistic analysis, التحليل اللغوي للقرآن, Quranic studies API, دراسات قرآنية API, Quran tafsir data, بيانات تفسير القرآن, Ibn Kathir tafsir, تفسير ابن كثير, Al-Saadi tafsir, تفسير السعدي, English Quran translation, ترجمة القرآن الإنجليزية, Quran in multiple languages, القرآن بلغات متعددة, Quran audio files, ملفات صوت القرآن, Quran reciters, قراء القرآن الكريم, Famous Quran reciters, قراء مشهورون, Quran recitation styles, أساليب التلاوة, Tajweed rules API, أحكام التجويد API, Quran learning API, واجهات تعلم القرآن, Quran memorization API, واجهات حفظ القرآن, Quran educational tools, أدوات تعليم القرآن, Quran for students, القرآن للطلاب, Quran for teachers, القرآن للمعلمين, Quran classroom tools, أدوات الفصول الدراسية للقرآن, Digital Quran, القرآن الرقمي, Electronic Mushaf, المصحف الإلكتروني, Quran web app, تطبيق ويب القرآن, Quran mobile app data, بيانات تطبيق القرآن للموبايل, Quran iOS app API, واجهات القرآن لـ iOS, Quran Android app API, واجهات القرآن لـ Android, React Quran API, واجهات القرآن لـ React, Vue Quran API, واجهات القرآن لـ Vue, Angular Quran API, واجهات القرآن لـ Angular, Flutter Quran API, واجهات القرآن لـ Flutter, React Native Quran API, واجهات القرآن لـ React Native, Quran integration, تكامل القرآن, Quran plugin, إضافات القرآن, Quran widget, ودجت القرآن, Quran embed, تضمين القرآن, Quran iframe, إطار القرآن, Quran CDN, شبكة توصيل محتوى القرآن, Fast Quran delivery, تسليم سريع للقرآن, Optimized Quran API, واجهات محسّنة للقرآن, Low latency Quran, زمن استجابة منخفض, Scalable Quran API, واجهات قابلة للتوسع, Reliable Quran service, خدمة موثوقة للقرآن, 24/7 Quran availability, توفر على مدار الساعة, Quran uptime, وقت تشغيل القرآن, Monitored Quran API, واجهات مراقبة, Secure Quran API, واجهات آمنة, Encrypted Quran data, بيانات مشفرة, Privacy-focused Quran API, واجهات تحترم الخصوصية, GDPR compliant Quran, القرآن متوافق مع GDPR, Islamic app development, تطوير التطبيقات الإسلامية, Muslim app developers, مطورو التطبيقات الإسلامية, Quran software, برامج القرآن, Quran programming, برمجة القرآن, Coding with Quran, البرمجة بالقرآن, Open source Quran, القرآن مفتوح المصدر, Community Quran project, مشروع القرآن المجتمعي, Quran API updates, تحديثات واجهات القرآن, Latest Quran API, أحدث واجهات القرآن, Modern Quran technology, تقنيات القرآن الحديثة, Advanced Quran features, ميزات القرآن المتقدمة, Comprehensive Quran data, بيانات شاملة للقرآن, Complete Quran information, معلومات كاملة للقرآن, Detailed Quran metadata, بيانات وصفية مفصلة, Structured Quran content, محتوى منظم للقرآن, Well-documented Quran API, واجهات موثقة جيداً, User-friendly Quran API, واجهات سهلة الاستخدام, Developer-friendly, ملائمة للمطورين, Easy integration, تكامل سهل, Simple setup, إعداد بسيط, Quick start Quran, بداية سريعة مع القرآن, Beginner-friendly Quran API, واجهات مناسبة للمبتدئين, Advanced Quran features, ميزات متقدمة للمحترفين, Professional Quran tools, أدوات احترافية, Enterprise Quran solutions, حلول مؤسسية, Commercial Quran API, واجهات تجارية, Business applications, تطبيقات الأعمال, Quran content management, إدارة محتوى القرآن, Quran database, قاعدة بيانات القرآن, SQL Quran data, بيانات القرآن SQL, NoSQL Quran, القرآن NoSQL, Cloud Quran storage, تخزين سحابي للقرآن, Offline Quran access, الوصول دون اتصال, Cached Quran data, بيانات مخزنة مؤقتاً, Performance optimization, تحسين الأداء, Load balancing Quran, توازن الحمل, Distributed Quran system, نظام موزع, Microservices Quran, خدمات صغيرة للقرآن, API versioning, إصدارات الواجهات, Backward compatibility, التوافق مع الإصدارات السابقة, Migration guides, أدلة الترحيل, Changelog, سجل التغييرات, API status, حالة الواجهات, Health checks, فحوصات الصحة, Monitoring dashboard, لوحة المراقبة, Analytics, التحليلات, Usage statistics, إحصائيات الاستخدام, Rate limiting, تحديد المعدل, Throttling, التقييد, Error handling, معالجة الأخطاء, Status codes, رموز الحالة, Response headers, رؤوس الاستجابة, Authentication, المصادقة, Authorization, التفويض, OAuth Quran, القرآن OAuth, API tokens, رموز الواجهات, Security best practices, أفضل ممارسات الأمان, Quran SDK, مجموعة تطوير القرآن, Client libraries, مكتبات العميل, Code samples, عينات الكود, Tutorials, دروس تعليمية, Guides, أدلة, Documentation, التوثيق, Reference, مرجع, Specifications, المواصفات, Standards, المعايير, Best practices, أفضل الممارسات, Tips and tricks, نصائح وحيل, Common issues, المشاكل الشائعة, Troubleshooting, استكشاف الأخطاء, FAQ, الأسئلة الشائعة, Support, الدعم, Community forum, منتدى المجتمع, Developer community, مجتمع المطورين, Feedback, التعليقات, Feature requests, طلبات الميزات, Bug reports, تقارير الأخطاء, Contact, الاتصال, Newsletter, النشرة الإخبارية, Updates, التحديثات, Announcements, الإعلانات, Blog, المدونة, News, الأخبار, Events, الفعاليات, Webinars, الندوات, Workshops, ورش العمل, Training, التدريب, Certification, الشهادات, Partners, الشركاء, Sponsors, الرعاة, Contributors, المساهمون, Credits, الاعتمادات, License, الترخيص, Terms of service, شروط الخدمة, Privacy policy, سياسة الخصوصية, Cookie policy, سياسة ملفات تعريف الارتباط, Disclaimer, إخلاء المسؤولية, About us, من نحن, Mission, المهمة, Vision, الرؤية, Values, القيم, Team, الفريق, Careers, الوظائف, Press, الصحافة, Media kit, حزمة الوسائط, Brand guidelines, إرشادات العلامة التجارية, Logo, الشعار, Social media, وسائل التواصل الاجتماعي, Twitter, Facebook, Instagram, LinkedIn, GitHub, YouTube, WhatsApp, Telegram, Discord, Slack, Email, البريد الإلكتروني, Newsletter signup, الاشتراك في النشرة, Subscribe, الاشتراك, Follow, المتابعة, Share, المشاركة, Like, الإعجاب, Comment, التعليق, Rate, التقييم, Review, المراجعة, Recommend, التوصية, Bookmark, وضع إشارة مرجعية, Save, الحفظ, Download, التحميل, Export, التصدير, Import, الاستيراد, Sync, المزامنة, Backup, النسخ الاحتياطي, Restore, الاستعادة, Settings, الإعدادات, Preferences, التفضيلات, Customize, التخصيص, Theme, السمة, Language, اللغة, Timezone, المنطقة الزمنية, Notifications, الإشعارات, Alerts, التنبيهات, Reminders, التذكيرات, Calendar, التقويم, Schedule, الجدول, Planner, المخطط, Organizer, المنظم, Tasks, المهام, To-do list, قائمة المهام, Projects, المشاريع, Workspace, مساحة العمل, Dashboard, لوحة التحكم, Profile, الملف الشخصي, Account, الحساب, User management, إدارة المستخدمين, Permissions, الصلاحيات, Roles, الأدوار, Groups, المجموعات, Teams, الفرق, Organizations, المؤسسات, Enterprise, المؤسسات الكبرى, Business, الأعمال, Commercial, التجاري, Personal, الشخصي, Individual, الفردي, Student, الطالب, Teacher, المعلم, School, المدرسة, University, الجامعة, Academic, الأكاديمي, Research, البحث, Study, الدراسة, Learn, التعلم, Teach, التعليم, Education, التعليم, Training, التدريب, Course, الدورة, Lesson, الدرس, Module, الوحدة, Chapter, الفصل, Section, القسم, Topic, الموضوع, Subject, المادة, Content, المحتوى, Resource, المورد, Material, المادة التعليمية, Reference, المرجع, Textbook, الكتاب المدرسي, Workbook, كتاب التمارين, Exercise, التمرين, Practice, الممارسة, Quiz, الاختبار القصير, Test, الاختبار, Exam, الامتحان, Assessment, التقييم, Evaluation, التقويم, Grade, الدرجة, Score, النتيجة, Progress, التقدم, Achievement, الإنجاز, Certificate, الشهادة, Badge, الشارة, Award, الجائزة, Recognition, الاعتراف, Leaderboard, لوحة المتصدرين, Competition, المنافسة, Challenge, التحدي, Game, اللعبة, Gamification, اللعبة التحفيزية, Fun, المرح, Interactive, التفاعلي, Engaging, جذاب, Motivation, التحفيز, Inspiration, الإلهام, Encouragement, التشجيع, Support, الدعم, Help, المساعدة, Assistance, المساعدة, Guidance, التوجيه, Advice, النصيحة, Tips, النصائح, Recommendations, التوصيات, Suggestions, الاقتراحات, Ideas, الأفكار, Innovation, الابتكار, Creativity, الإبداع, Excellence, التميز, Quality, الجودة, Standards, المعايير, Reliability, الموثوقية, Trustworthy, جدير بالثقة, Authentic, أصيل, Verified, موثق, Accurate, دقيق, Precise, محدد, Detailed, مفصل, Comprehensive, شامل, Complete, كامل, Full, كامل, Entire, بأكمله, Whole, كلي, Total, إجمالي, All, جميع, Every, كل, Each, كل واحد, Individual, فردي, Specific, محدد, Particular, خاص, Unique, فريد, Special, خاص, Exclusive, حصري, Premium, ممتاز, Pro, محترف, Plus, زائد, Advanced, متقدم, Expert, خبير, Master, متقن, Professional, محترف, Official, رسمي, Authorized, مخول, Certified, معتمد, Approved, موافق عليه, Recommended, موصى به, Popular, شائع, Trending, رائج, Latest, الأحدث, New, جديد, Updated, محدث, Fresh, طازج, Current, حالي, Recent, حديث, Modern, عصري, Contemporary, معاصر, Traditional, تقليدي, Classic, كلاسيكي, Timeless, خالد, Eternal, أبدي, Permanent, دائم, Lasting, دائم, Enduring, صامد, Reliable, موثوق, Dependable, يمكن الاعتماد عليه, Consistent, متسق, Stable, مستقر, Solid, صلب, Robust, قوي, Strong, قوي, Powerful, قوي, Effective, فعال, Efficient, كفء, Fast, سريع, Quick, سريع, Rapid, سريع, Instant, فوري, Immediate, فوري, Real-time, الوقت الفعلي, Live, مباشر, Dynamic, ديناميكي, Flexible, مرن, Adaptable, قابل للتكيف, Customizable, قابل للتخصيص, Configurable, قابل للتكوين, Adjustable, قابل للتعديل, Modular, نمطي, Extensible, قابل للتوسع, Scalable, قابل للتوسع, Expandable, قابل للتوسع, Growing, متنامي, Evolving, متطور, Improving, متحسن, Enhancing, محسّن, Upgrading, ترقية, Optimizing, تحسين, Refining, صقل, Perfecting, إتقان, Polishing, تلميع, Finishing, إنهاء, Completing, إكمال, Finalizing, إتمام, Delivering, تسليم, Shipping, شحن, Launching, إطلاق, Releasing, إصدار, Publishing, نشر, Announcing, الإعلان, Introducing, تقديم, Presenting, عرض, Showcasing, عرض, Highlighting, إبراز, Featuring, تمييز, Promoting, ترويج, Marketing, تسويق, Advertising, إعلان, Branding, العلامة التجارية, Positioning, تحديد الموقع, Messaging, الرسائل, Communication, التواصل, Outreach, التواصل, Engagement, المشاركة, Interaction, التفاعل, Connection, الاتصال, Relationship, العلاقة, Partnership, الشراكة, Collaboration, التعاون, Cooperation, التعاون, Coordination, التنسيق, Integration, التكامل, Unification, التوحيد, Consolidation, الدمج, Combination, الجمع, Merger, الاندماج, Alliance, التحالف, Coalition, الائتلاف, Network, الشبكة, Ecosystem, النظام البيئي, Platform, المنصة, Infrastructure, البنية التحتية, Framework, الإطار, Architecture, المعمارية, Structure, الهيكل, Design, التصميم, Layout, التخطيط, Interface, الواجهة, Experience, التجربة, Usability, قابلية الاستخدام, Accessibility, إمكانية الوصول, Inclusivity, الشمولية, Diversity, التنوع, Equality, المساواة, Fairness, العدالة, Ethics, الأخلاقيات, Responsibility, المسؤولية, Accountability, المساءلة, Transparency, الشفافية, Openness, الانفتاح, Honesty, الصدق, Integrity, النزاهة, Trust, الثقة, Respect, الاحترام, Dignity, الكرامة, Honor, الشرف, Pride, الفخر, Glory, المجد, Success, النجاح, Achievement, الإنجاز, Accomplishment, الإنجاز, Victory, النصر, Win, الفوز, Triumph, الانتصار, Excellence, التميز, Superiority, التفوق, Leadership, القيادة, Pioneer, الرائد, Innovator, المبتكر, Trailblazer, الرائد, Groundbreaker, الرائد, First, الأول, Best, الأفضل, Top, الأعلى, Leading, الرائد, Premier, الرئيسي, Prime, الرئيسي, Main, الرئيسي, Primary, الأساسي, Principal, الرئيسي, Chief, الرئيسي, Head, الرئيس, Master, المعلم, Expert, الخبير, Authority, السلطة, Specialist, المتخصص, Professional, المحترف, Guru, المعلم, Sage, الحكيم, Scholar, العالم, Academic, الأكاديمي, Intellectual, المثقف, Thinker, المفكر, Philosopher, الفيلسوف, Theologian, اللاهوتي, Religious, ديني, Spiritual, روحاني, Sacred, مقدس, Holy, مقدس, Divine, إلهي, Blessed, مبارك, Righteous, صالح, Pious, تقي, Devout, متدين, Faithful, مؤمن, Believer, مؤمن, Muslim, مسلم, Islamic, إسلامي, Quranic, قرآني, Koranic, قرآني, Scripture, الكتاب المقدس, Revelation, الوحي, Prophet, النبي, Messenger, الرسول, Muhammad, محمد, Allah, الله, God, الله, Lord, الرب, Creator, الخالق, Almighty, القدير, Merciful, الرحيم, Compassionate, الرحمن, Forgiving, الغفور, Loving, المحب, Kind, اللطيف, Generous, الكريم, Gracious, الكريم, Beneficent, المنعم, Provider, الرزاق, Sustainer, الرزاق, Protector, الحافظ, Guardian, الحارس, Helper, المعين, Supporter, الناصر, Friend, الولي, Guide, الهادي, Teacher, المعلم, Educator, المربي, Trainer, المدرب, Instructor, المدرس, Coach, المدرب, Mentor, الموجه, Advisor, المستشار, Consultant, الاستشاري, Counselor, المستشار" />
+
+<!-- Author & Copyright -->
+    <meta name="author" content="Quran APIs Team" />
+    <meta name="copyright" content="© 2026 Quran APIs. جميع الحقوق محفوظة - All Rights Reserved." />
+    <meta name="designer" content="YouSef HeiBa" />
+    <meta name="developer" content="YouSef HeiBa" />
+    <meta name="owner" content="Quran APIs Documentation" />
+    <meta name="reply-to" content="contact@yousefheiba.com" />
+    <meta name="contact" content="contact@yousefheiba.com" />
+    <meta name="creator" content="Quran APIs Team" />
+    <meta name="publisher" content="Quran APIs" />
+    <meta name="application-name" content="Quran APIs Documentation" />
+
+    <!-- Robots & Indexing -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="revisit-after" content="1 days" />
+    <meta name="rating" content="general" />
+    <meta name="distribution" content="global" />
+    <meta name="coverage" content="worldwide" />
+    <meta name="target" content="all" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Quran APIs Documentation" />
+    <meta property="og:url" content="https://quran.yousefheiba.com/" />
+    <meta property="og:title" content="واجهات برمجية القرآن الكريم | Quran APIs Documentation – موسوعة شاملة لجميع بيانات القرآن" />
+    <meta property="og:description" content="واجهات برمجية مجانية شاملة للقرآن الكريم: 114 سورة، 6236 آية، 604 صفحة، الأذكار، الأدعية، مواقيت الصلاة، التلاوات الصوتية، صفحات المصحف بصيغة PNG والنص، استجابات JSON، وثائق عربي/إنجليزي، أمثلة cURL، توفر 24/7، بدون حدود استخدام، للمطورين والتطبيقات الإسلامية." />
+    <meta property="og:image" content="https://quran.yousefheiba.com/logo.png" />
+    <meta property="og:image:secure_url" content="https://quran.yousefheiba.com/logo.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="Quran APIs Logo - شعار واجهات برمجية القرآن الكريم" />
+    <meta property="og:locale" content="ar_AR" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://quran.yousefheiba.com/" />
+    <meta name="twitter:title" content="Quran APIs Documentation | واجهات برمجية القرآن الكريم للمطورين" />
+    <meta name="twitter:description" content="واجهات برمجية مجانية شاملة: 114 سورة، 6236 آية، أذكار، أدعية، مواقيت الصلاة، صفحات المصحف، JSON، cURL، توفر 24/7، للمطورين والمشاريع الإسلامية." />
+    <meta name="twitter:image" content="https://quran.yousefheiba.com/logo.png" />
+    <meta name="twitter:image:alt" content="Quran APIs Logo" />
+
+    <!-- Canonical & Alternate -->
+    <link rel="canonical" href="https://quran.yousefheiba.com/" />
+    <link rel="alternate" href="https://quran.yousefheiba.com/ar" hreflang="ar" />
+    <link rel="alternate" href="https://quran.yousefheiba.com/en" hreflang="en" />
+    <link rel="alternate" href="https://quran.yousefheiba.com/" hreflang="x-default" />
+
+    <!-- Mobile & Theme -->
+    <meta name="theme-color" content="#0c7c5c" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Quran APIs" />
+    <meta name="format-detection" content="telephone=yes" />
+    <meta name="format-detection" content="address=yes" />
+    <meta name="format-detection" content="email=yes" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Icons & Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
+
+<link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
+    <link rel="shortcut icon" href="/logo.png" type="image/x-icon" />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://quran.yousefheiba.com/sitemap.xml" />
+
+    <!-- Preconnect for Performance -->
+    <link rel="dns-prefetch" href="https://quran.yousefheiba.com" />
+    <link rel="preload" href="/assets/MiSansArabic-Bold-BkWMprV5.ttf" as="font" type="font/ttf" crossorigin="anonymous" />
+
+    <!-- Enhanced Structured Data - Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://quran.yousefheiba.com/#website",
+          "url": "https://quran.yousefheiba.com/",
+          "name": "Quran APIs Documentation",
+          "alternateName": ["واجهات برمجية القرآن الكريم", "Quran API", "Islamic APIs"],
+          "description": "واجهات برمجية مجانية شاملة للقرآن الكريم مع 114 سورة، 6236 آية، الأذكار، الأدعية، مواقيت الصلاة، وصفحات المصحف",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Quran APIs",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://quran.yousefheiba.com/logo.png",
+              "width": 512,
+              "height": 512
+            }
+          },
+          "inLanguage": ["ar", "en"],
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://quran.yousefheiba.com/?s={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://quran.yousefheiba.com/#webpage",
+          "url": "https://quran.yousefheiba.com/",
+          "name": "واجهات برمجية القرآن الكريم | Quran APIs Documentation – موسوعة التلاوات، البحث",
+          "isPartOf": {
+            "@id": "https://quran.yousefheiba.com/#website"
+          },
+          "description": "دليل شامل لواجهات برمجية القرآن الكريم مع جميع السور، الآيات، الأذكار، الأدعية، مواقيت الصلاة، وصفحات المصحف بصيغتي النص والصورة",
+          "inLanguage": ["ar", "en"],
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "url": "https://quran.yousefheiba.com/logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "الرئيسية",
+                "item": "https://quran.yousefheiba.com/"
+              }
+            ]
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://quran.yousefheiba.com/#api",
+          "name": "Quran APIs Documentation Platform",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Cross-platform",
+          "description": "منصة واجهات برمجية مجانية ومفتوحة لآيات القرآن الكريم، الأذكار، الأدعية، مواقيت الصلاة، صفحات المصحف، والتلاوات الصوتية، مع وثائق عربية/إنجليزية شاملة للمطورين",
+          "offers": {
+            "@type": "Offer",
+            "price": 0,
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+          },
+          "availableLanguage": ["Arabic", "English"],
+          "featureList": [
+            "114 سورة كاملة مع معلومات تفصيلية (الاسم بالعربية والإنجليزية، نوع السورة، عدد الآيات)",
+            "6236 آية من القرآن الكريم مع أرقام الصفحات، الأجزاء، الأحزاب، ومعلومات السجدة",
+            "604 صفحة من المصحف الشريف بصيغة PNG عالية الجودة وكنصوص عربية كاملة",
+
+"الأذكار اليومية الشاملة مصنفة حسب الأوقات والمناسبات (الصباح والمساء، الأذان، الوضوء، دخول وخروج المنزل، النوم والاستيقاظ)",
+            "أدعية القرآن والسنة النبوية مصنفة إلى أدعية نبوية، قرآنية، أدعية الأنبياء، وأدعية ختم القرآن",
+            "مواقيت الصلاة الخمسة الدقيقة حسب الموقع الجغرافي تلقائياً مع التاريخ الميلادي والهجري",
+            "معلومات موسوعية شاملة عن ليلة القدر المباركة مع فضلها وعلاماتها والأعمال المستحبة",
+            "استجابات JSON موحدة وسهلة التحليل لجميع الواجهات البرمجية",
+            "أوامر cURL جاهزة للاستخدام الفوري لاختبار جميع الواجهات",
+            "توفر عالي 24/7 مع مراقبة مستمرة وتوزيع CDN",
+            "بدون حاجة لمفتاح API ولا حدود على عدد الطلبات",
+            "وثائق تفاعلية ثنائية اللغة (عربي/إنجليزي)",
+            "فلاتر طرق HTTP (GET/POST) مع أمثلة كود شاملة",
+            "إرشادات دمج سهلة لمواقع الويب، تطبيقات الهاتف، البوتات، ولوحات التحكم",
+            "دعم HTTPS كامل مع تشفير البيانات",
+            "متوسط وقت استجابة أقل من 100ms"
+          ],
+          "url": "https://quran.yousefheiba.com/",
+          "screenshot": "https://quran.yousefheiba.com/logo.png"
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://quran.yousefheiba.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "هل API مجاني؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "نعم، API مجاني بالكامل بدون أي حدود استخدام. يمكنك استخدامه في مشاريعك القرآنية أو الدينية بدون أي تكلفة."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "هل أحتاج إلى مفتاح API؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "لا، لا تحتاج إلى مفتاح API. يمكنك البدء في استخدام API مباشرة بدون أي تسجيل أو مصادقة."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "ما هي صيغة البيانات المسترجعة؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "جميع البيانات تُرجع بصيغة JSON (JavaScript Object Notation) وهي صيغة قياسية وسهلة الاستخدام في جميع لغات البرمجة."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "هل يدعم API HTTPS؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "نعم، جميع الطلبات تتم عبر HTTPS لضمان أمان البيانات والتشفير الكامل للاتصال."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "ما هي سرعة الاستجابة؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "API مصمم ليكون سريعاً جداً مع متوسط وقت استجابة أقل من 100ms. الخوادم محسّنة لتقديم أفضل أداء ممكن."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "هل هناك حدود على عدد الطلبات؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "لا، لا توجد أي حدود على عدد الطلبات. يمكنك إجراء عدد غير محدود من الطلبات حسب احتياجاتك."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "ما هي أنواع البيانات المتاحة؟",
+              "acceptedAnswer": {
+
+"@type": "Answer",
+                "text": "توفر الواجهات البرمجية: 114 سورة كاملة، 6236 آية مع التفاصيل، 604 صفحة من المصحف (نصاً وصورة)، الأذكار اليومية، الأدعية القرآنية والنبوية، مواقيت الصلاة حسب الموقع، ومعلومات عن ليلة القدر."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "كيف أبدأ باستخدام API؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "ببساطة، قم بإرسال طلب GET أو POST إلى عنوان الواجهة المطلوبة واحصل على البيانات بصيغة JSON. لا حاجة لتسجيل أو مفتاح API. يمكنك البدء فوراً باستخدام أمثلة cURL الموجودة في التوثيق."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "هل يمكن استخدام API في مشاريع تجارية؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "نعم، يمكن استخدام API في جميع أنواع المشاريع بما في ذلك المشاريع التجارية، الشخصية، التعليمية، والبحثية. الخدمة مجانية بالكامل للجميع."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "هل التوثيق متوفر بلغات متعددة؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "نعم، التوثيق متوفر باللغتين العربية والإنجليزية مع وصف شامل لكل واجهة برمجية، معاملاتها، وأمثلة الاستخدام."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "كم عدد الآيات والسور المتوفرة؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "متوفر جميع آيات القرآن الكريم البالغ عددها 6236 آية موزعة على 114 سورة، مع معلومات تفصيلية لكل آية تشمل رقم الصفحة، الجزء، الحزب، ونوع السورة."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "هل تتوفر صفحات المصحف بصيغة صور؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "نعم، جميع صفحات المصحف الشريف البالغ عددها 604 صفحة متوفرة بصيغة PNG عالية الجودة، بالإضافة إلى إمكانية الحصول على محتوى كل صفحة كنص عربي."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "هل يمكن الحصول على مواقيت الصلاة؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "نعم، يمكن الحصول على مواقيت الصلاة الخمسة بدقة عالية حسب موقعك الجغرافي تلقائياً، مع التاريخ الميلادي والهجري الكامل والمنطقة الزمنية."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "ما هي الأذكار والأدعية المتوفرة؟",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "متوفرة مجموعة شاملة من الأذكار اليومية (الصباح والمساء، الأذان، الوضوء، دخول وخروج المنزل، النوم) والأدعية (النبوية، القرآنية، أدعية الأنبياء، وأدعية ختم القرآن)."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "name": "واجهات برمجية القرآن الكريم - Quran APIs",
+          "description": "قائمة شاملة بجميع الواجهات البرمجية المتاحة للقرآن الكريم",
+          "url": "https://quran.yousefheiba.com/",
+          "numberOfItems": 7,
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+
+"position": 1,
+              "item": {
+                "@type": "Thing",
+                "@id": "https://quran.yousefheiba.com/api/surahs",
+                "name": "سور القرآن الكريم - Quran Surahs",
+                "description": "احصل على قائمة كاملة بجميع سور القرآن الكريم (114 سورة) مع معلومات تفصيلية لكل سورة تشمل: رقم السورة، الاسم بالعربية والإنجليزية، نوع السورة (مكية أو مدنية)، وعدد الآيات.",
+                "url": "https://quran.yousefheiba.com/api/surahs"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@type": "Thing",
+                "@id": "https://quran.yousefheiba.com/api/ayah",
+                "name": "آيات سورة محددة - Surah Verses",
+                "description": "احصل على جميع آيات سورة معينة من القرآن الكريم بتفاصيل كاملة لكل آية تشمل: رقم الآية، نص الآية، رقم الآية في السورة، رقم الصفحة، رقم الجزء، رقم الحزب، ومعلومات السجدة إن وجدت.",
+                "url": "https://quran.yousefheiba.com/api/ayah"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "item": {
+                "@type": "Thing",
+                "@id": "https://quran.yousefheiba.com/api/azkar",
+                "name": "أذكار المسلم - Muslim Azkar",
+                "description": "احصل على مجموعة شاملة من الأذكار اليومية للمسلم مصنفة حسب الأوقات والمناسبات، تشمل: أذكار الصباح والمساء، أذكار الأذان، أذكار الوضوء، أذكار دخول وخروج المنزل، أذكار دخول الخلاء، أذكار النوم والاستيقاظ.",
+                "url": "https://quran.yousefheiba.com/api/azkar"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "item": {
+                "@type": "Thing",
+                "@id": "https://quran.yousefheiba.com/api/duas",
+                "name": "أدعية القرآن والسنة - Quranic and Prophetic Duas",
+                "description": "احصل على مجموعة واسعة من الأدعية المأثورة من القرآن الكريم والسنة النبوية الشريفة، مصنفة إلى أربعة أقسام رئيسية: أدعية نبوية من السنة المطهرة، أدعية قرآنية من كتاب الله، أدعية الأنبياء والمرسلين، وأدعية ختم القرآن الكريم.",
+                "url": "https://quran.yousefheiba.com/api/duas"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 5,
+              "item": {
+                "@type": "Thing",
+                "@id": "https://quran.yousefheiba.com/api/getPrayerTimes",
+                "name": "مواقيت الصلاة حسب موقعك - Prayer Times by Your Location",
+                "description": "احصل على مواقيت الصلاة الخمسة بدقة عالية حسب موقعك الجغرافي تلقائياً. يتم تحديد موقعك من عنوان IP الخاص بك وإرجاع أوقات الصلاة (الفجر، الشروق، الظهر، العصر، المغرب، العشاء) مع التاريخ الميلادي والهجري الكامل.",
+                "url": "https://quran.yousefheiba.com/api/getPrayerTimes"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 6,
+              "item": {
+                "@type": "Thing",
+                "@id": "https://quran.yousefheiba.com/api/quranPagesImage",
+                "name": "صفحات المصحف الشريف كصور - Quran Mushaf Pages as Images",
+
+"description": "احصل على روابط مباشرة لجميع صفحات المصحف الشريف (604 صفحة) على شكل صور عالية الجودة بصيغة PNG. كل صفحة مرقمة ومتاحة للتحميل الفوري. الصور واضحة ومناسبة للقراءة والعرض في التطبيقات والمواقع الإلكترونية.",
+                "url": "https://quran.yousefheiba.com/api/quranPagesImage"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 7,
+              "item": {
+                "@type": "Thing",
+                "@id": "https://quran.yousefheiba.com/api/quranPagesText",
+                "name": "صفحات القرآن الكريم كنصوص - Quran Pages as Text",
+                "description": "احصل على محتوى أي صفحة من صفحات المصحف الشريف (من 1 إلى 604) كنص عربي كامل مع معلومات تفصيلية شاملة لكل آية في الصفحة. البيانات تشمل: نص الآية، معلومات السورة، رقم الآية في السورة، رقم الجزء، رقم الحزب، ومعلومات السجدة.",
+                "url": "https://quran.yousefheiba.com/api/quranPagesText"
+              }
+            }
+          ]
+        },
+        {
+          "@type": "ProfessionalService",
+          "name": "خدمات واجهات برمجية القرآن الكريم",
+          "description": "خدمات واجهات برمجية مجانية شاملة للقرآن الكريم",
+          "provider": {
+            "@type": "Organization",
+            "name": "Quran APIs",
+            "url": "https://quran.yousefheiba.com/"
+          },
+          "areaServed": {
+            "@type": "Place",
+            "name": "Worldwide"
+          },
+          "serviceType": [
+            "واجهات برمجية للقرآن الكريم",
+            "Quran API Services",
+            "Islamic Developer Tools",
+            "أدوات المطورين الإسلامية",
+            "Quran Data Integration",
+            "تكامل بيانات القرآن",
+            "Prayer Times API",
+            "مواقيت الصلاة",
+            "Islamic Content API",
+            "محتوى إسلامي"
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "واجهات برمجية القرآن الكريم",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "واجهات سور وآيات القرآن الكريم",
+                  "description": "احصل على جميع سور القرآن الكريم (114 سورة) وآياته (6236 آية) مع معلومات تفصيلية شاملة تشمل أرقام الصفحات، الأجزاء، الأحزاب، ونوع السورة"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "صفحات المصحف الشريف",
+                  "description": "احصل على جميع صفحات المصحف الشريف (604 صفحة) بصيغة PNG عالية الجودة وكنصوص عربية كاملة مع معلومات كل آية في الصفحة"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "الأذكار والأدعية الإسلامية",
+                  "description": "مجموعة شاملة من الأذكار اليومية والأدعية القرآنية والنبوية مصنفة حسب الأوقات والمناسبات مع عدد مرات التكرار الموصى به"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "مواقيت الصلاة الدقيقة",
+                  "description": "احصل على مواقيت الصلاة الخمسة بدقة عالية حسب موقعك الجغرافي تلقائياً مع التاريخ الميلادي والهجري الكامل"
+                }
+              }
+            ]
+          },
+
+"priceRange": "مجاني - Free",
+          "availableLanguage": ["Arabic", "English"]
+        },
+        {
+          "@type": "Dataset",
+          "name": "قاعدة بيانات القرآن الكريم الشاملة",
+          "description": "قاعدة بيانات شاملة تحتوي على جميع آيات القرآن الكريم (6236 آية) موزعة على 114 سورة مع معلومات تفصيلية",
+          "url": "https://quran.yousefheiba.com/",
+          "creator": {
+            "@type": "Organization",
+            "name": "Quran APIs"
+          },
+          "distribution": {
+            "@type": "DataDownload",
+            "encodingFormat": "application/json",
+            "contentUrl": "https://quran.yousefheiba.com/api/"
+          },
+          "temporalCoverage": "2024-",
+          "spatialCoverage": {
+            "@type": "Place",
+            "name": "Worldwide"
+          },
+          "inLanguage": ["ar", "en"],
+          "keywords": "القرآن الكريم، Quran، آيات، سور، أذكار، أدعية، مواقيت الصلاة، المصحف الشريف"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Additional Structured Data - Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Quran APIs",
+      "alternateName": "واجهات برمجية القرآن الكريم",
+      "url": "https://quran.yousefheiba.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://quran.yousefheiba.com/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "description": "منصة واجهات برمجية مجانية شاملة للقرآن الكريم والمحتوى الإسلامي",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Technical Support",
+        "email": "contact@yousefheiba.com",
+        "availableLanguage": ["Arabic", "English"]
+      },
+      "sameAs": [
+        "https://www.facebook.com/dev.yousefahmeed"
+      ]
+    }
+    </script>
+
+    <!-- Additional Structured Data - API Documentation -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "واجهات برمجية القرآن الكريم - دليل المطورين الشامل",
+      "description": "دليل تقني شامل لاستخدام واجهات برمجية القرآن الكريم مع أمثلة عملية وأوامر cURL جاهزة",
+      "author": {
+        "@type": "Organization",
+        "name": "Quran APIs Team"
+      },
+      "inLanguage": ["ar", "en"],
+      "about": {
+        "@type": "SoftwareApplication",
+        "name": "Quran APIs",
+        "applicationCategory": "DeveloperApplication"
+      },
+      "articleSection": [
+        "API Documentation",
+        "Quran Data",
+        "Islamic Content",
+        "Developer Tools",
+        "توثيق الواجهات البرمجية",
+        "بيانات القرآن",
+        "محتوى إسلامي",
+        "أدوات المطورين"
+      ]
+    }
+    </script>
+
+    <!-- Additional Structured Data - API Services -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "API Service",
+      "name": "Quran APIs - Free Islamic Content APIs",
+      "description": "واجهات برمجية مجانية للقرآن الكريم توفر الوصول إلى 114 سورة، 6236 آية، 604 صفحة من المصحف، الأذكار، الأدعية، ومواقيت الصلاة",
+      "provider": {
+        "@type": "Organization",
+        "name": "Quran APIs"
+      },
+      "areaServed": {
+        "@type": "Place",
+        "name": "Worldwide"
+      },
+      "availableChannel": {
+        "@type": "ServiceChannel",
+        "serviceUrl": "https://quran.yousefheiba.com/",
+        "serviceType": "REST API",
+        "availableLanguage": ["Arabic", "English"]
+      },
+      "termsOfService": "Free to use for all purposes"
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-9B6uHIN_.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-B40yrYNY.css">
+  </head>
+
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

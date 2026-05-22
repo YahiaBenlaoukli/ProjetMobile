@@ -531,7 +531,6 @@ class _SurahCardState extends State<_SurahCard> with SingleTickerProviderStateMi
                           GestureDetector(
                             onTap: () {
                               context.read<AudioService>().playSurahWithPlaylist(number);
-                              context.read<FirestoreService>().recordPlay();
                             },
                             child: Container(
                               width: 32,

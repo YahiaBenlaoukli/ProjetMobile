@@ -1,13 +1,16 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import '../models/track_model.dart';
 import 'download_service.dart';
 import 'quran_api_service.dart';
+import 'firestore_service.dart';
 
 class AudioService extends ChangeNotifier {
   final AudioPlayer _player = AudioPlayer();
   final DownloadService _downloadService;
+  final FirestoreService _firestoreService;
   final QuranApiService _api = QuranApiService();
 
   List<TrackModel> _tracks = [];
@@ -25,7 +28,14 @@ class AudioService extends ChangeNotifier {
   List<Map<String, dynamic>> _currentVerses = [];
   bool _versesLoading = false;
 
-  AudioService(this._downloadService);
+  // Stats tracking fields
+  DateTime? _playStartTime;
+  TrackModel? _trackedTrack;
+  Timer? _syncTimer;
+
+  AudioService(this._downloadService, this._firestoreService) {
+    _initStatsTracking();
+  }
 
   AudioPlayer get player => _player;
   List<TrackModel> get tracks => _tracks;
@@ -278,8 +288,90 @@ class AudioService extends ChangeNotifier {
     return startPages[surahNumber] ?? 1;
   }
 
+  void _initStatsTracking() {
+    // Listen to play/pause state changes
+    _player.playingStream.listen((playing) {
+      _handlePlayStateChange(playing);
+    });
+
+    // Listen to track changes
+    _player.currentIndexStream.listen((index) {
+      _handleTrackChange(index);
+    });
+
+    // Periodic sync every 30 seconds of continuous play to prevent data loss
+    _syncTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (_player.playing && _playStartTime != null && _trackedTrack != null) {
+        final elapsed = DateTime.now().difference(_playStartTime!).inSeconds;
+        if (elapsed >= 30) {
+          _firestoreService.updateListeningStats(
+            surahId: _trackedTrack!.id,
+            surahName: _trackedTrack!.title,
+            additionalSeconds: elapsed,
+            isNewPlay: false,
+          );
+          _playStartTime = DateTime.now(); // Reset start time to current sync timestamp
+        }
+      }
+    });
+  }
+
+  void _handlePlayStateChange(bool playing) {
+    if (playing) {
+      // Audio started playing
+      _playStartTime = DateTime.now();
+      _trackedTrack = _currentTrack;
+      if (_trackedTrack != null) {
+        _firestoreService.updateListeningStats(
+          surahId: _trackedTrack!.id,
+          surahName: _trackedTrack!.title,
+          additionalSeconds: 0,
+          isNewPlay: true,
+        );
+      }
+    } else {
+      // Audio paused or stopped
+      _syncAccumulatedTime();
+    }
+  }
+
+  void _handleTrackChange(int? index) {
+    if (_player.playing) {
+      // Sync accumulated time for the previous track before starting the new one
+      _syncAccumulatedTime();
+      _playStartTime = DateTime.now();
+      _trackedTrack = _currentTrack;
+      if (_trackedTrack != null) {
+        _firestoreService.updateListeningStats(
+          surahId: _trackedTrack!.id,
+          surahName: _trackedTrack!.title,
+          additionalSeconds: 0,
+          isNewPlay: true,
+        );
+      }
+    }
+  }
+
+  void _syncAccumulatedTime() {
+    if (_playStartTime != null && _trackedTrack != null) {
+      final elapsed = DateTime.now().difference(_playStartTime!).inSeconds;
+      if (elapsed > 0) {
+        _firestoreService.updateListeningStats(
+          surahId: _trackedTrack!.id,
+          surahName: _trackedTrack!.title,
+          additionalSeconds: elapsed,
+          isNewPlay: false,
+        );
+      }
+      _playStartTime = null;
+      _trackedTrack = null;
+    }
+  }
+
   @override
   void dispose() {
+    _syncAccumulatedTime();
+    _syncTimer?.cancel();
     _player.dispose();
     super.dispose();
   }

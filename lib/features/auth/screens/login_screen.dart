@@ -25,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   String? _errorMessage;
   bool _hasSavedCredentials = false;
+  DateTime? _dateOfBirth;
 
   @override
   void initState() {
@@ -52,6 +53,46 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  Future<void> _pickDateOfBirth() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _dateOfBirth ?? DateTime(now.year - 13, now.month, now.day),
+      firstDate: DateTime(1920),
+      lastDate: now,
+      helpText: 'Select your date of birth',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: Colors.white,
+              surface: AppColors.white,
+              onSurface: AppColors.textPrimary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && mounted) {
+      setState(() {
+        _dateOfBirth = picked;
+        _errorMessage = null;
+      });
+    }
+  }
+
+  int _calculateAge(DateTime birthDate) {
+    final now = DateTime.now();
+    int age = now.year - birthDate.year;
+    if (now.month < birthDate.month ||
+        (now.month == birthDate.month && now.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
   Future<void> _submit() async {
     // Hide keyboard
     FocusScope.of(context).unfocus();
@@ -66,6 +107,20 @@ class _LoginScreenState extends State<LoginScreen> {
         (!_isLogin && (confirmPassword.isEmpty || firstName.isEmpty || lastName.isEmpty))) {
       setState(() {
         _errorMessage = 'Please fill in all fields';
+      });
+      return;
+    }
+
+    if (!_isLogin && _dateOfBirth == null) {
+      setState(() {
+        _errorMessage = 'Please select your date of birth';
+      });
+      return;
+    }
+
+    if (!_isLogin && _calculateAge(_dateOfBirth!) < 13) {
+      setState(() {
+        _errorMessage = 'You must be at least 13 years old to create an account';
       });
       return;
     }
@@ -164,6 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLogin = !_isLogin;
       _errorMessage = null;
+      _dateOfBirth = null;
     });
   }
 
@@ -373,6 +429,45 @@ class _LoginScreenState extends State<LoginScreen> {
                                           label: 'Confirm Password',
                                           icon: Icons.lock_outline_rounded,
                                           obscureText: _obscurePassword,
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
+
+                              // Date of Birth Picker (Register only)
+                              AnimatedSize(
+                                duration: const Duration(milliseconds: 300),
+                                child: !_isLogin
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(top: 16),
+                                        child: GestureDetector(
+                                          onTap: _pickDateOfBirth,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.background,
+                                              borderRadius: BorderRadius.circular(16),
+                                              border: Border.all(color: AppColors.textHint.withOpacity(0.2)),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                const Icon(Icons.cake_outlined, color: AppColors.primary, size: 22),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Text(
+                                                    _dateOfBirth != null
+                                                        ? '${_dateOfBirth!.day.toString().padLeft(2, '0')}/${_dateOfBirth!.month.toString().padLeft(2, '0')}/${_dateOfBirth!.year}'
+                                                        : 'Date of Birth',
+                                                    style: TextStyle(
+                                                      color: _dateOfBirth != null ? AppColors.textPrimary : AppColors.textHint,
+                                                      fontWeight: _dateOfBirth != null ? FontWeight.w600 : FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const Icon(Icons.calendar_today_rounded, color: AppColors.textHint, size: 18),
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       )
                                     : const SizedBox.shrink(),
