@@ -101,212 +101,260 @@ class _SurahReaderScreenState extends State<SurahReaderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(widget.surahNameEn,
-                style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary)),
-            Text(
-              widget.surahNameAr,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.gold,
-                fontFamily: 'serif',
-                fontWeight: FontWeight.w500,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 180.0,
+            floating: false,
+            pinned: true,
+            backgroundColor: AppColors.primary,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_rounded, color: AppColors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    widget.surahNameEn,
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    widget.surahNameAr,
+                    style: AppTheme.arabicStyle(
+                      color: AppColors.goldLight,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primaryLight,
+                    ],
+                  ),
+                ),
+                // Could add subtle Islamic pattern image here with opacity
               ),
             ),
-          ],
-        ),
-        backgroundColor: AppColors.white,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
+          ),
+          SliverToBoxAdapter(
+            child: _buildBody(),
+          ),
+        ],
       ),
-      body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(color: AppColors.primary),
-            SizedBox(height: 16),
-            Text('Loading verses...',
-                style: TextStyle(color: AppColors.textSecondary)),
-          ],
-        ),
-      );
-    }
-
-    if (_error.isNotEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
+      return Padding(
+        padding: const EdgeInsets.only(top: 100),
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded,
-                  size: 48, color: AppColors.error),
+              const CircularProgressIndicator(color: AppColors.primary),
               const SizedBox(height: 16),
-              Text(_error,
-                  textAlign: TextAlign.center,
+              Text('Loading verses...',
                   style: const TextStyle(color: AppColors.textSecondary)),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() { _isLoading = true; _error = ''; });
-                  _loadSurahAyahs();
-                },
-                child: const Text('Retry'),
-              ),
             ],
           ),
         ),
       );
     }
 
-    if (_ayahs.isEmpty) {
-      return const Center(
-        child: Text('No verses found',
-            style: TextStyle(color: AppColors.textSecondary)),
+    if (_error.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline_rounded,
+                size: 48, color: AppColors.error),
+            const SizedBox(height: 16),
+            Text(_error,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.textSecondary)),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                setState(() { _isLoading = true; _error = ''; });
+                _loadSurahAyahs();
+              },
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
       );
     }
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        // Bismillah header (except At-Tawba)
-        if (widget.surahNumber != 9)
-          Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primary.withValues(alpha: 0.08),
-                  AppColors.gold.withValues(alpha: 0.06),
+    if (_ayahs.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 100),
+        child: Center(
+          child: Text('No verses found',
+              style: TextStyle(color: AppColors.textSecondary)),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
+      child: Column(
+        children: [
+          // Bismillah header (except At-Tawba)
+          if (widget.surahNumber != 9)
+            Container(
+              margin: const EdgeInsets.only(bottom: 30),
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadow.withOpacity(0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
                 ],
               ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.12)),
-            ),
-            child: const Center(
-              child: Text(
-                'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontFamily: 'serif',
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w500,
-                ),
-                textDirection: TextDirection.rtl,
-              ),
-            ),
-          ),
-        // Ayahs
-        ..._ayahs.map((ayah) {
-          final numberInSurah = ayah['numberInSurah'].toString();
-          final text = ayah['text'] ?? '';
-          final juz = ayah['juz'] ?? '';
-          final page = ayah['page'] ?? '';
-          final sajda = ayah['sajda'].toString();
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: sajda == '1'
-                    ? AppColors.gold.withValues(alpha: 0.5)
-                    : AppColors.divider,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: AppColors.primarySurface,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          numberInSurah,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      'Juz $juz · Page $page',
-                      style: const TextStyle(
-                          color: AppColors.textHint, fontSize: 11),
-                    ),
-                    if (sajda == '1') ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.goldSurface,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Text(
-                          'Sajda',
-                          style: TextStyle(
-                            color: AppColors.gold,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  text,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontFamily: 'serif',
-                    color: AppColors.textPrimary,
-                    height: 2.0,
+              child: Center(
+                child: Text(
+                  'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                  style: AppTheme.arabicStyle(
+                    fontSize: 28,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
                   ),
                   textDirection: TextDirection.rtl,
-                  textAlign: TextAlign.right,
                 ),
-              ],
+              ),
             ),
-          );
-        }),
-      ],
+          // Ayahs
+          ..._ayahs.map((ayah) {
+            final numberInSurah = ayah['numberInSurah'].toString();
+            final text = ayah['text'] ?? '';
+            final juz = ayah['juz'] ?? '';
+            final page = ayah['page'] ?? '';
+            final sajda = ayah['sajda'].toString();
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: sajda == '1'
+                            ? AppColors.gold.withOpacity(0.5)
+                            : Colors.transparent,
+                        width: sajda == '1' ? 1.5 : 0,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.shadow.withOpacity(0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: AppColors.primarySurface,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  numberInSurah,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.background,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Juz $juz · Page $page',
+                                style: const TextStyle(
+                                    color: AppColors.textSecondary, 
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            if (sajda == '1') ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.goldSurface,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  'Sajda',
+                                  style: TextStyle(
+                                    color: AppColors.gold,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          text,
+                          style: AppTheme.arabicStyle(
+                            fontSize: 26,
+                            height: 2.2,
+                            color: AppColors.textPrimary,
+                          ),
+                          textDirection: TextDirection.rtl,
+                          textAlign: TextAlign.justify,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
     );
   }
 }

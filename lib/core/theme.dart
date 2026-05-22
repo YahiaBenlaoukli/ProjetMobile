@@ -1,42 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
-  // Primary Green Palette
-  static const Color primary = Color(0xFF1B5E20);
-  static const Color primaryLight = Color(0xFF388E3C);
+  // Primary Green Palette - Modern, Vibrant
+  static const Color primary = Color(0xFF0F9D58);
+  static const Color primaryDark = Color(0xFF0B7D46);
+  static const Color primaryLight = Color(0xFF4CB050);
   static const Color primarySurface = Color(0xFFE8F5E9);
   static const Color primaryMuted = Color(0xFFA5D6A7);
 
-  // Gold Accent
-  static const Color gold = Color(0xFFCDA434);
-  static const Color goldLight = Color(0xFFF5E6B8);
-  static const Color goldSurface = Color(0xFFFFF8E1);
+  // Gold Accent - Elegant, soft
+  static const Color gold = Color(0xFFD4AF37);
+  static const Color goldLight = Color(0xFFF9E897);
+  static const Color goldSurface = Color(0xFFFFFDF5);
 
   // Neutrals
   static const Color white = Color(0xFFFFFFFF);
-  static const Color background = Color(0xFFF9FBF9);
+  static const Color background = Color(0xFFF4F6F9); // Softer off-white
   static const Color surface = Color(0xFFFFFFFF);
   static const Color card = Color(0xFFFFFFFF);
-  static const Color textPrimary = Color(0xFF1A1A2E);
-  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color textPrimary = Color(0xFF1F2937); // Slightly softer than black
+  static const Color textSecondary = Color(0xFF4B5563);
   static const Color textHint = Color(0xFF9CA3AF);
-  static const Color divider = Color(0xFFE8ECE8);
-  static const Color border = Color(0xFFD1D5DB);
-  static const Color shadow = Color(0x0D000000);
+  static const Color divider = Color(0xFFE5E7EB);
+  static const Color border = Color(0xFFF3F4F6);
+  static const Color shadow = Color(0x0A000000); // Softer shadow
 
   // Status
-  static const Color success = Color(0xFF059669);
-  static const Color error = Color(0xFFDC2626);
-  static const Color meccan = Color(0xFF1B5E20);
-  static const Color medinan = Color(0xFF1565C0);
+  static const Color success = Color(0xFF10B981);
+  static const Color error = Color(0xFFEF4444);
+  static const Color meccan = Color(0xFF0F9D58);
+  static const Color medinan = Color(0xFF3B82F6);
 }
 
 class AppTheme {
   static ThemeData get light {
+    final baseTextTheme = GoogleFonts.poppinsTextTheme();
+    
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      fontFamily: 'Roboto',
+      textTheme: baseTextTheme,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         onPrimary: AppColors.white,
@@ -47,13 +51,13 @@ class AppTheme {
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.background,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.white,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.poppins(
           color: AppColors.primary,
           fontSize: 20,
           fontWeight: FontWeight.w700,
@@ -64,19 +68,18 @@ class AppTheme {
         color: AppColors.card,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.divider, width: 1),
+          borderRadius: BorderRadius.circular(20),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.transparent,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textHint,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
         selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: TextStyle(fontSize: 12),
+        unselectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -85,26 +88,26 @@ class AppTheme {
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.background,
+        fillColor: AppColors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         hintStyle: const TextStyle(color: AppColors.textHint),
       ),
       dividerTheme: const DividerThemeData(
@@ -112,6 +115,21 @@ class AppTheme {
         thickness: 1,
         space: 0,
       ),
+    );
+  }
+
+  // Helper method for Arabic text style using Amiri
+  static TextStyle arabicStyle({
+    double fontSize = 24,
+    Color color = AppColors.textPrimary,
+    FontWeight fontWeight = FontWeight.w400,
+    double height = 2.0,
+  }) {
+    return GoogleFonts.amiri(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      height: height,
     );
   }
 }

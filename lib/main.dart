@@ -13,6 +13,7 @@ import 'services/firestore_service.dart';
 import 'services/storage_service.dart';
 import 'services/quran_api_service.dart';
 import 'services/download_service.dart';
+import 'services/secure_storage_service.dart';
 import 'features/auth/screens/biometric_screen.dart';
 import 'features/auth/screens/auth_wrapper.dart';
 import 'features/quran/screens/surah_list_screen.dart';
@@ -60,15 +61,14 @@ class MyApp extends StatelessWidget {
         Provider<FirestoreService>(create: (_) => FirestoreService()),
         Provider<StorageService>(create: (_) => StorageService()),
         Provider<QuranApiService>(create: (_) => QuranApiService()),
+        Provider<SecureStorageService>(create: (_) => SecureStorageService()),
       ],
       child: MaterialApp(
         title: 'Quran App',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
-        home: const BiometricScreen(
-          nextScreen: AuthWrapper(
-            child: MainScreen(),
-          ),
+        home: const AuthWrapper(
+          child: MainScreen(),
         ),
       ),
     );
@@ -112,112 +112,222 @@ class _MainScreenState extends State<MainScreen> {
     PrayerTimesScreen(),
   ];
 
+  String _getInitials(String? displayName) {
+    if (displayName == null || displayName.trim().isEmpty) return 'U';
+    final parts = displayName.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
+  }
+
+  String _getFirstName(String? displayName) {
+    if (displayName == null || displayName.trim().isEmpty) return 'User';
+    return displayName.trim().split(' ').first;
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = context.read<AuthService>();
     final tab = _tabs[_currentIndex];
+    final displayName = authService.currentUser?.displayName;
+    final initials = _getInitials(displayName);
+    final firstName = _getFirstName(displayName);
 
     return Scaffold(
+      extendBody: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text(
-          tab.title,
-          style: const TextStyle(
-            fontFamily: 'serif',
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: AppColors.primary,
+        toolbarHeight: 72,
+        titleSpacing: 0,
+        leadingWidth: 0,
+        leading: const SizedBox.shrink(),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              // Avatar with initials
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primaryDark,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    initials,
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Greeting & Arabic title
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      ' weclome ,$firstName ',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.2,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      tab.title,
+                      style: AppTheme.arabicStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        backgroundColor: AppColors.white,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded,
-                color: AppColors.textHint, size: 22),
-            onPressed: () => authService.signOut(),
-            tooltip: 'Sign out',
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.logout_rounded,
+                  color: AppColors.textHint, size: 20),
+              onPressed: () => authService.signOut(),
+              tooltip: 'Sign out',
+              splashRadius: 20,
+            ),
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: AppColors.divider,
-            height: 1,
-          ),
-        ),
       ),
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        switchInCurve: Curves.easeOut,
-        switchOutCurve: Curves.easeIn,
+        duration: const Duration(milliseconds: 300),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.0, 0.05),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            ),
+          );
+        },
         child: _screens[_currentIndex],
       ),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Mini player
           const MiniPlayer(),
-          // Bottom nav
-          Container(
-            decoration: const BoxDecoration(
-              color: AppColors.white,
-              border: Border(
-                top: BorderSide(color: AppColors.divider, width: 1),
+          SafeArea(
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadow.withOpacity(0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
               ),
-            ),
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(_tabs.length, (index) {
-                    final t = _tabs[index];
-                    final selected = index == _currentIndex;
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(_tabs.length, (index) {
+                  final t = _tabs[index];
+                  final selected = index == _currentIndex;
 
-                    return GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => setState(() => _currentIndex = index),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: selected
-                              ? AppColors.primarySurface
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      if (_currentIndex != index) {
+                        setState(() => _currentIndex = index);
+                      }
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutCubic,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? AppColors.primarySurface
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            transitionBuilder: (child, animation) =>
+                                ScaleTransition(scale: animation, child: child),
+                            child: Icon(
                               selected ? t.activeIcon : t.icon,
+                              key: ValueKey<bool>(selected),
                               size: 24,
                               color: selected
                                   ? AppColors.primary
                                   : AppColors.textHint,
                             ),
-                            const SizedBox(height: 3),
+                          ),
+                          if (selected) ...[
+                            const SizedBox(width: 8),
                             Text(
                               t.label,
                               style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: selected
-                                    ? FontWeight.w700
-                                    : FontWeight.w500,
-                                color: selected
-                                    ? AppColors.primary
-                                    : AppColors.textHint,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
                               ),
                             ),
                           ],
-                        ),
+                        ],
                       ),
-                    );
-                  }),
-                ),
+                    ),
+                  );
+                }),
               ),
             ),
           ),

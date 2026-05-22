@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../../core/theme.dart';
 import '../../../services/quran_api_service.dart';
 import '../../../services/audio_service.dart';
@@ -33,14 +34,11 @@ class _SurahListScreenState extends State<SurahListScreen> {
   Future<void> _loadData() async {
     try {
       final surahs = await _api.fetchSurahs();
-      // Pre-load audio tracks in background for default reciter
       if (mounted) {
         final audio = context.read<AudioService>();
         if (!audio.tracksLoaded) {
-          // fetch default reciters list and select Alafasy if not selected
           await audio.fetchReciters();
           if (audio.currentReciterId.isEmpty && audio.reciters.isNotEmpty) {
-            // Find Mishary Alafasy (id: 1) or take first
             final defaultReciter = audio.reciters.firstWhere(
               (r) => r['reciter_id'] == '1',
               orElse: () => audio.reciters.first,
@@ -145,30 +143,41 @@ class _SurahListScreenState extends State<SurahListScreen> {
       children: [
         // Search bar
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-          child: TextField(
-            controller: _searchController,
-            onChanged: _filterSurahs,
-            decoration: InputDecoration(
-              hintText: 'Search surah...',
-              prefixIcon:
-                  const Icon(Icons.search_rounded, color: AppColors.textHint),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear_rounded,
-                          color: AppColors.textHint, size: 20),
-                      onPressed: () {
-                        _searchController.clear();
-                        _filterSurahs('');
-                      },
-                    )
-                  : null,
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadow,
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                )
+              ],
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterSurahs,
+              decoration: InputDecoration(
+                hintText: 'Search surah or number...',
+                prefixIcon: const Icon(Icons.search_rounded,
+                    color: AppColors.primary),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear_rounded,
+                            color: AppColors.textHint, size: 20),
+                        onPressed: () {
+                          _searchController.clear();
+                          _filterSurahs('');
+                        },
+                      )
+                    : null,
+              ),
             ),
           ),
         ),
-        // Count and Reciter Selection
+        // Header
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -176,8 +185,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
                 '${_filteredSurahs.length} Surahs',
                 style: const TextStyle(
                     color: AppColors.textSecondary,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
               ),
               GestureDetector(
                 onTap: () {
@@ -189,23 +198,24 @@ class _SurahListScreenState extends State<SurahListScreen> {
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     color: AppColors.primarySurface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.record_voice_over_rounded, 
-                          size: 14, color: AppColors.primary),
-                      const SizedBox(width: 6),
+                      const Icon(Icons.record_voice_over_rounded,
+                          size: 16, color: AppColors.primary),
+                      const SizedBox(width: 8),
                       Consumer<AudioService>(
                         builder: (context, audio, child) {
                           final name = audio.currentReciterName;
                           return Text(
-                            name.isNotEmpty ? name : 'Mishary Alafasy',
+                            name.isNotEmpty ? name : 'Mishary',
                             style: const TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: AppColors.primary,
                             ),
@@ -215,8 +225,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
                         },
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.keyboard_arrow_down_rounded, 
-                          size: 16, color: AppColors.primary),
+                      const Icon(Icons.keyboard_arrow_down_rounded,
+                          size: 18, color: AppColors.primary),
                     ],
                   ),
                 ),
@@ -226,24 +236,47 @@ class _SurahListScreenState extends State<SurahListScreen> {
         ),
         // Surah list
         Expanded(
-          child: ListView.builder(
-            itemCount: _filteredSurahs.length,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-            itemBuilder: (context, index) {
-              final surah = _filteredSurahs[index];
-              return _SurahCard(
-                surah: surah,
-                isFavorite: _favorites.contains(
-                    int.tryParse(surah['number'].toString()) ?? 0),
-                onToggleFavorite: (id) {
-                  setState(() {
-                    if (_favorites.contains(id)) {
-                      _favorites.remove(id);
-                    } else {
-                      _favorites.add(id);
-                    }
-                  });
-                },
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 600;
+
+              return AnimationLimiter(
+                child: isWide
+                    ? GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 400,
+                          mainAxisExtent: 100, // Fixed height prevents bottom overflow
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 12,
+                        ),
+                        itemCount: _filteredSurahs.length,
+                        itemBuilder: (context, index) => AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          duration: const Duration(milliseconds: 375),
+                          columnCount: 2,
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: _buildSurahCard(index),
+                            ),
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                        itemCount: _filteredSurahs.length,
+                        itemBuilder: (context, index) => AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 375),
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: _buildSurahCard(index),
+                            ),
+                          ),
+                        ),
+                      ),
               );
             },
           ),
@@ -251,9 +284,27 @@ class _SurahListScreenState extends State<SurahListScreen> {
       ],
     );
   }
+
+  Widget _buildSurahCard(int index) {
+    final surah = _filteredSurahs[index];
+    return _SurahCard(
+      surah: surah,
+      isFavorite: _favorites.contains(
+          int.tryParse(surah['number'].toString()) ?? 0),
+      onToggleFavorite: (id) {
+        setState(() {
+          if (_favorites.contains(id)) {
+            _favorites.remove(id);
+          } else {
+            _favorites.add(id);
+          }
+        });
+      },
+    );
+  }
 }
 
-class _SurahCard extends StatelessWidget {
+class _SurahCard extends StatefulWidget {
   final Map<String, dynamic> surah;
   final bool isFavorite;
   final ValueChanged<int> onToggleFavorite;
@@ -265,184 +316,244 @@ class _SurahCard extends StatelessWidget {
   });
 
   @override
+  State<_SurahCard> createState() => _SurahCardState();
+}
+
+class _SurahCardState extends State<_SurahCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final number = int.tryParse(surah['number'].toString()) ?? 0;
-    final nameAr = surah['name_ar'] ?? '';
-    final nameEn = surah['name_en'] ?? '';
-    final type = surah['type'] ?? '';
-    final ayatCount = surah['ayat_count'] ?? '';
+    final number = int.tryParse(widget.surah['number'].toString()) ?? 0;
+    final nameAr = widget.surah['name_ar'] ?? '';
+    final nameEn = widget.surah['name_en'] ?? '';
+    final type = widget.surah['type'] ?? '';
+    final ayatCount = widget.surah['ayat_count'] ?? '';
     final isMeccan = type == 'Meccan';
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => SurahReaderScreen(
-                surahNumber: number,
-                surahNameEn: nameEn,
-                surahNameAr: nameAr,
-              ),
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) {
+        _controller.reverse();
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => SurahReaderScreen(
+              surahNumber: number,
+              surahNameEn: nameEn,
+              surahNameAr: nameAr,
             ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          child: Row(
-            children: [
-              // Number badge
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: AppColors.primarySurface,
-                  borderRadius: BorderRadius.circular(12),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(begin: const Offset(0.05, 0), end: Offset.zero)
+                      .animate(animation),
+                  child: child,
                 ),
-                child: Center(
-                  child: Text(
-                    '$number',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.primary,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+              );
+            },
+          ),
+        );
+      },
+      onTapCancel: () => _controller.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow.withOpacity(0.04),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
               ),
-              const SizedBox(width: 14),
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      nameEn,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isMeccan
-                                ? AppColors.primarySurface
-                                : const Color(0xFFE3F2FD),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            type,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: isMeccan
-                                  ? AppColors.meccan
-                                  : AppColors.medinan,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '$ayatCount verses',
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () {
-                            // Find the estimated start page for this surah and open the viewer
-                            final audio = context.read<AudioService>();
-                            // We can use a quick local mapping or an API method if available, 
-                            // here using a simple fallback to page 1 for the viewer entry
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => QuranPageViewer(
-                                  surahName: nameAr,
-                                  initialPage: audio.getSurahStartPage(number),
-                                ),
-                              ),
-                            );
-                          },
-                          child: const Icon(Icons.menu_book_rounded, 
-                              size: 16, color: AppColors.textHint),
-                        ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Number badge (Hexagon or rounded square)
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: AppColors.primarySurface,
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppColors.primaryLight.withOpacity(0.2),
+                        AppColors.primarySurface,
                       ],
                     ),
-                  ],
-                ),
-              ),
-              // Arabic name
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    nameAr,
-                    style: const TextStyle(
-                      fontFamily: 'serif',
-                      fontSize: 16,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$number',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
+                ),
+                const SizedBox(width: 16),
+                // Info
+                Expanded(
+                  flex: 5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Favorite toggle
-                      GestureDetector(
-                        onTap: () {
-                          onToggleFavorite(number);
-                          context
-                              .read<FirestoreService>()
-                              .addFavorite(number);
-                        },
-                        child: Icon(
-                          isFavorite
-                              ? Icons.favorite_rounded
-                              : Icons.favorite_border_rounded,
-                          size: 20,
-                          color: isFavorite
-                              ? AppColors.gold
-                              : AppColors.textHint,
+                      Text(
+                        nameEn,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          color: AppColors.textPrimary,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(width: 8),
-                      // Play button
-                      GestureDetector(
-                        onTap: () {
-                          context.read<AudioService>().playSurahWithPlaylist(number);
-                          context.read<FirestoreService>().recordPlay();
-                        },
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(8),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(
+                            isMeccan ? Icons.location_city_rounded : Icons.mosque_rounded,
+                            size: 12,
+                            color: isMeccan ? AppColors.meccan : AppColors.medinan,
                           ),
-                          child: const Icon(
-                            Icons.play_arrow_rounded,
-                            color: AppColors.white,
-                            size: 20,
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              type.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.5,
+                                color: isMeccan ? AppColors.meccan : AppColors.medinan,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 6),
+                          Container(
+                            width: 3,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: AppColors.textHint,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              '$ayatCount verses',
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ],
+                ),
+                // Arabic name
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          nameAr,
+                          style: AppTheme.arabicStyle(
+                            fontSize: 20,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Favorite toggle
+                          GestureDetector(
+                            onTap: () {
+                              widget.onToggleFavorite(number);
+                              context.read<FirestoreService>().addFavorite(number);
+                            },
+                            child: Icon(
+                              widget.isFavorite
+                                  ? Icons.favorite_rounded
+                                  : Icons.favorite_border_rounded,
+                              size: 20,
+                              color: widget.isFavorite ? AppColors.error : AppColors.textHint,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // Play button
+                          GestureDetector(
+                            onTap: () {
+                              context.read<AudioService>().playSurahWithPlaylist(number);
+                              context.read<FirestoreService>().recordPlay();
+                            },
+                            child: Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.play_arrow_rounded,
+                                color: AppColors.primary,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
