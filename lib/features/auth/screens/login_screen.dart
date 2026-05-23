@@ -24,23 +24,11 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   String? _errorMessage;
-  bool _hasSavedCredentials = false;
   DateTime? _dateOfBirth;
 
   @override
   void initState() {
     super.initState();
-    _checkSavedCredentials();
-  }
-
-  Future<void> _checkSavedCredentials() async {
-    final secureStorage = context.read<SecureStorageService>();
-    final creds = await secureStorage.getCredentials();
-    if (creds != null && mounted) {
-      setState(() {
-        _hasSavedCredentials = true;
-      });
-    }
   }
 
   @override
@@ -166,54 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _loginWithBiometrics() async {
-    final biometricService = context.read<BiometricService>();
-    final isSupported = await biometricService.isBiometricSupported();
 
-    if (!isSupported) {
-      setState(() {
-        _errorMessage = 'Biometric authentication is not supported on this device.';
-      });
-      return;
-    }
-
-    final success = await biometricService.authenticate(
-      reason: 'Scan your fingerprint to log in securely',
-    );
-
-    if (success) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-
-      final secureStorage = context.read<SecureStorageService>();
-      final authService = context.read<AuthService>();
-      final creds = await secureStorage.getCredentials();
-
-      if (creds != null) {
-        try {
-          await authService.signInWithEmail(creds['email']!, creds['password']!);
-        } catch (e) {
-          if (mounted) {
-            setState(() {
-              _errorMessage = e.toString().replaceAll(RegExp(r'\[.*\]'), '').trim();
-            });
-          }
-        }
-      } else {
-        setState(() {
-          _errorMessage = 'No saved credentials found.';
-        });
-      }
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
 
   void _toggleAuthMode() {
     setState(() {
@@ -539,23 +480,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               ),
                                       ),
                                     ),
-                                    if (_isLogin && _hasSavedCredentials) ...[
-                                      const SizedBox(width: 12),
-                                      Container(
-                                        width: 56,
-                                        height: 56,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primarySurface,
-                                          borderRadius: BorderRadius.circular(16),
-                                          border: Border.all(color: AppColors.primary.withOpacity(0.2)),
-                                        ),
-                                        child: IconButton(
-                                          icon: const Icon(Icons.fingerprint_rounded, color: AppColors.primary, size: 28),
-                                          onPressed: _isLoading ? null : _loginWithBiometrics,
-                                          tooltip: 'Login with Fingerprint',
-                                        ),
-                                      ),
-                                    ],
+
                                   ],
                                 ),
                               ),

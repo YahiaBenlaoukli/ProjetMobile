@@ -71,8 +71,10 @@ class MyApp extends StatelessWidget {
         title: 'Quran App',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
-        home: const AuthWrapper(
-          child: MainScreen(),
+        home: const BiometricScreen(
+          nextScreen: AuthWrapper(
+            child: MainScreen(),
+          ),
         ),
       ),
     );
