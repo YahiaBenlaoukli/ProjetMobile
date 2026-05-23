@@ -73,7 +73,6 @@ class FirestoreService {
     });
   }
 
-  /// Update listening stats (total plays, total time, per-surah, and daily analytics).
   Future<void> updateListeningStats({
     required int surahId,
     required String surahName,
@@ -85,60 +84,24 @@ class FirestoreService {
     final today = DateTime.now();
     final dateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
 
-    await _db.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
-
-      if (!snapshot.exists) {
-        transaction.set(docRef, {
-          'total_plays': isNewPlay ? 1 : 0,
-          'total_listening_time_seconds': additionalSeconds,
-          'surah_plays': {
-            surahId.toString(): {
-              'count': isNewPlay ? 1 : 0,
-              'name': surahName,
-              'listening_time_seconds': additionalSeconds,
-            }
-          },
-          'daily_listening': {
-            dateKey: additionalSeconds,
-          },
-        });
-      } else {
-        final data = snapshot.data() ?? {};
-        final totalPlays = (data['total_plays'] ?? 0) + (isNewPlay ? 1 : 0);
-        final totalTime = (data['total_listening_time_seconds'] ?? 0) + additionalSeconds;
-
-        final Map<String, dynamic> surahPlays = Map<String, dynamic>.from(data['surah_plays'] ?? {});
-        final surahKey = surahId.toString();
-
-        if (surahPlays.containsKey(surahKey)) {
-          final surahData = Map<String, dynamic>.from(surahPlays[surahKey]);
-          final currentCount = surahData['count'] ?? 0;
-          final currentTime = surahData['listening_time_seconds'] ?? 0;
-
-          surahData['count'] = currentCount + (isNewPlay ? 1 : 0);
-          surahData['listening_time_seconds'] = currentTime + additionalSeconds;
-          surahPlays[surahKey] = surahData;
-        } else {
-          surahPlays[surahKey] = {
-            'count': isNewPlay ? 1 : 0,
+    try {
+      await docRef.set({
+        'total_plays': FieldValue.increment(isNewPlay ? 1 : 0),
+        'total_listening_time_seconds': FieldValue.increment(additionalSeconds),
+        'surah_plays': {
+          surahId.toString(): {
+            'count': FieldValue.increment(isNewPlay ? 1 : 0),
+            'listening_time_seconds': FieldValue.increment(additionalSeconds),
             'name': surahName,
-            'listening_time_seconds': additionalSeconds,
-          };
-        }
-
-        // Update daily listening
-        final Map<String, dynamic> dailyListening = Map<String, dynamic>.from(data['daily_listening'] ?? {});
-        dailyListening[dateKey] = (dailyListening[dateKey] ?? 0) + additionalSeconds;
-
-        transaction.update(docRef, {
-          'total_plays': totalPlays,
-          'total_listening_time_seconds': totalTime,
-          'surah_plays': surahPlays,
-          'daily_listening': dailyListening,
-        });
-      }
-    });
+          }
+        },
+        'daily_listening': {
+          dateKey: FieldValue.increment(additionalSeconds),
+        },
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('Error updating listening stats: $e');
+    }
   }
 
   /// Get real-time stream of all user stats.

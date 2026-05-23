@@ -288,20 +288,26 @@ class AudioService extends ChangeNotifier {
     return startPages[surahNumber] ?? 1;
   }
 
+  bool _isActuallyPlaying = false;
+
   void _initStatsTracking() {
-    // Listen to play/pause state changes
-    _player.playingStream.listen((playing) {
-      _handlePlayStateChange(playing);
+    // Listen to accurate player state changes
+    _player.playerStateStream.listen((state) {
+      final isPlaying = state.playing && state.processingState != ProcessingState.completed;
+      if (isPlaying != _isActuallyPlaying) {
+        _isActuallyPlaying = isPlaying;
+        _handlePlayStateChange(isPlaying);
+      }
     });
 
-    // Listen to track changes
-    _player.currentIndexStream.listen((index) {
-      _handleTrackChange(index);
+    // Listen to track/sequence changes reliably
+    _player.sequenceStateStream.listen((state) {
+      _handleTrackChange();
     });
 
     // Periodic sync every 30 seconds of continuous play to prevent data loss
     _syncTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      if (_player.playing && _playStartTime != null && _trackedTrack != null) {
+      if (_isActuallyPlaying && _playStartTime != null && _trackedTrack != null) {
         final elapsed = DateTime.now().difference(_playStartTime!).inSeconds;
         if (elapsed >= 30) {
           _firestoreService.updateListeningStats(
@@ -318,6 +324,8 @@ class AudioService extends ChangeNotifier {
 
   void _handlePlayStateChange(bool playing) {
     if (playing) {
+      if (_trackedTrack?.id == _currentTrack?.id && _playStartTime != null) return;
+      
       // Audio started playing
       _playStartTime = DateTime.now();
       _trackedTrack = _currentTrack;
@@ -335,8 +343,11 @@ class AudioService extends ChangeNotifier {
     }
   }
 
-  void _handleTrackChange(int? index) {
-    if (_player.playing) {
+  void _handleTrackChange() {
+    if (_isActuallyPlaying) {
+      // Prevent duplicate "new play" counts if the track hasn't actually changed
+      if (_trackedTrack?.id == _currentTrack?.id) return;
+
       // Sync accumulated time for the previous track before starting the new one
       _syncAccumulatedTime();
       _playStartTime = DateTime.now();
